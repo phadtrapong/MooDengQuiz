@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เกมควิซหมูเด้ง</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Sarabun', sans-serif;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h1 {
+            color: #ff69b4;
+            margin-top: 30px;
+        }
+        img {
+            width: 200px;
+            border-radius: 50%;
+        }
+        .quiz-box {
+            background: #fff;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+        }
+        .question {
+            font-size: 1.2em;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        button {
+            background-color: #ff69b4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff1493;
+        }
+        #result {
+            font-size: 1.5em;
+            margin: 20px;
+        }
+        .social-buttons {
+            margin: 20px;
+        }
+        .social-buttons button {
+            background-color: #1da1f2;
+            margin: 5px;
+        }
+        .social-buttons button:hover {
+            background-color: #0d95e8;
+        }
+        /* Progress bar */
+        .progress-container {
+            width: 80%;
+            background-color: #f0f8ff;
+            margin: 20px auto;
+        }
+        .progress-bar {
+            width: 0;
+            height: 20px;
+            background-color: #ff69b4;
+            border-radius: 10px;
+            transition: width 0.4s;
+        }
+    </style>
+    <!-- โหลดฟอนต์ภาษาไทย -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <h1>🐾 เกมควิซหมูเด้ง 🦛</h1>
+        <img src="moodeng.png" alt="หมูเด้ง">
+        <p>ทดสอบความรู้เกี่ยวกับหมูเด้ง ฮิปโปน้อยสุดน่ารัก!</p>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="quiz-box" id="quiz-box">
+            <!-- คำถามจะถูกเพิ่มโดย JavaScript -->
+        </div>
+
+        <div id="result"></div>
+
+        <div class="social-buttons">
+            <button onclick="likeQuiz()">👍 ถูกใจ</button>
+            <button onclick="shareQuiz()">🔗 แชร์</button>
+        </div>
+
+        <!-- Reference to Moo Deng official page -->
+        <p>
+            ดูรายละเอียดเพิ่มเติมเกี่ยวกับหมูเด้งได้ที่ 
+            <a href="https://khaokheow.zoothailand.org/en/index.php" target="_blank" style="color:#ff69b4;">เว็บไซต์อย่างเป็นทางการของหมูเด้ง</a>
+        </p>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "หมูเด้งเกิดวันที่เท่าไหร่?",
+                options: ["10 กรกฎาคม พ.ศ. 2567", "15 มิถุนายน พ.ศ. 2566", "20 สิงหาคม พ.ศ. 2565", "5 พฤษภาคม พ.ศ. 2564"],
+                answer: "10 กรกฎาคม พ.ศ. 2567"
+            },
+            {
+                question: "หมูเด้งเป็นสัตว์ชนิดใด?",
+                options: ["ช้างแอฟริกา", "ฮิปโปโปเตมัสแคระ", "แพนด้ายักษ์", "จิงโจ้"],
+                answer: "ฮิปโปโปเตมัสแคระ"
+            },
+            {
+                question: "ชื่อของหมูเด้งถูกตั้งขึ้นอย่างไร?",
+                options: ["พนักงานสวนสัตว์ตั้งชื่อ", "การโหวตของประชาชนกว่า 20,000 คน", "ตั้งชื่อตามนักวิทยาศาสตร์", "พ่อแม่ของหมูเด้งตั้งให้"],
+                answer: "การโหวตของประชาชนกว่า 20,000 คน"
+            },
+            {
+                question: "หมูเด้งอาศัยอยู่ที่ไหน?",
+                options: ["สวนสัตว์เปิดเขาเขียว", "สวนสัตว์ซานดิเอโก", "สวนสัตว์ลอนดอน", "ซิดนีย์ไวลด์ไลฟ์ปาร์ค"],
+                answer: "สวนสัตว์เปิดเขาเขียว"
+            },
+            {
+                question: "อะไรที่ทำให้หมูเด้งพิเศษกว่าฮิปโปตัวอื่น?",
+                options: ["บินได้", "ร่าเริงและกระตือรือร้นมากกว่า", "มีผิวสีม่วง", "ร้องเพลงได้"],
+                answer: "ร่าเริงและกระตือรือร้นมากกว่า"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const quizBox = document.getElementById('quiz-box');
+        const result = document.getElementById('result');
+        const progressBar = document.getElementById('progress-bar');
+
+        function loadQuestion() {
+            if (currentQuestion < quizData.length) {
+                const q = quizData[currentQuestion];
+                quizBox.innerHTML = `
+                    <div class="question">${q.question}</div>
+                    <ul class="options">
+                        ${q.options.map((option, index) => `
+                            <li>
+                                <input type="radio" name="option" id="option${index}" value="${option}">
+                                <label for="option${index}">${option}</label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <button onclick="submitAnswer()">ส่งคำตอบ</button>
+                `;
+
+                updateProgressBar();
+            } else {
+                showResult();
+            }
+        }
+
+        function submitAnswer() {
+            const options = document.getElementsByName('option');
+            let selectedOption;
+            for (const option of options) {
+                if (option.checked) {
+                    selectedOption = option.value;
+                    break;
+                }
+            }
+
+            if (!selectedOption) {
+                alert("กรุณาเลือกคำตอบ!");
+                return;
+            }
+
+            if (selectedOption === quizData[currentQuestion].answer) {
+                score++;
+            }
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function updateProgressBar() {
+            const progressPercent = ((currentQuestion + 1) / quizData.length) * 100;
+            progressBar.style.width = progressPercent + '%';
+        }
+
+        function showResult() {
+            quizBox.style.display = 'none';
+            let message = '';
+            if (score === quizData.length) {
+                message = '🏆 ยอดเยี่ยม! คุณเป็นผู้เชี่ยวชาญเรื่องหมูเด้ง!';
+            } else if (score >= quizData.length / 2) {
+                message = '🎉 เก่งมาก! คุณรู้จักหมูเด้งดีทีเดียว!';
+            } else {
+                message = '😊 พยายามได้ดี! เรียนรู้เกี่ยวกับหมูเด้งเพิ่มเติมและลองอีกครั้ง!';
+            }
+            result.innerHTML = `
+                <p>คุณทำได้ ${score} จาก ${quizData.length} ข้อ</p>
+                <p>${message}</p>
+            `;
+        }
+
+        function likeQuiz() {
+            alert("ขอบคุณที่ถูกใจเกมควิซของเรา! 🥰");
+        }
+
+        function shareQuiz() {
+            alert("แชร์เกมควิซนี้กับเพื่อนๆ และร่วมสนุกไปกับหมูเด้งกันเถอะ! 🦛💖");
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
